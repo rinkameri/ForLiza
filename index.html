@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create by Rinka</title>
+    <link href="https://fonts.googleapis.com/css2?family=Arial+Black&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            font-family: 'Arial Black', sans-serif;
+            background: linear-gradient(135deg, #0a192f, #172a45, #1a365d);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            perspective: 1000px;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInDown 1.2s forwards 0.5s;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+        
+        .magic-button {
+            background: linear-gradient(45deg, #3498db, #8e44ad);
+            color: white;
+            font-family: 'Arial Black', sans-serif;
+            font-size: clamp(1.3rem, 3.5vw, 2.2rem);
+            padding: clamp(1rem, 3vw, 1.5rem) clamp(2rem, 6vw, 4rem);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 
+                        0 0 30px rgba(52, 152, 219, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeInUp 1s forwards 1.2s;
+            letter-spacing: 1px;
+            z-index: 20;
+            will-change: transform, box-shadow;
+        }
+        
+        .magic-button:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 
+                        0 0 40px rgba(142, 68, 173, 0.6);
+        }
+        
+        .magic-button:active {
+            transform: scale(0.95);
+        }
+        
+        .magic-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .magic-button:hover::before {
+            left: 100%;
+        }
+        
+        .message-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            overflow: hidden;
+            z-index: 15;
+        }
+        
+        .main-message {
+            font-size: clamp(4rem, 12vw, 10rem);
+            color: #fff;
+            text-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+            z-index: 25;
+            text-align: center;
+            opacity: 0;
+            max-width: 90%;
+            line-height: 1.1;
+            padding: 20px;
+            font-weight: 900;
+            position: relative;
+            transform: scale(0.5) rotateX(30deg);
+            animation: textAppear 1.5s forwards;
+        }
+        
+        .love-particle {
+            position: absolute;
+            font-size: clamp(1rem, 2.5vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.8);
+            user-select: none;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 5;
+            will-change: transform, opacity;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: clamp(0.9rem, 2vw, 1.3rem);
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 30;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2.5s;
+        }
+        
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #3498db, 0 0 20px #3498db;
+            opacity: 0.6;
+            will-change: transform;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(231, 76, 60, 0.8);
+            font-size: 1.5rem;
+            opacity: 0;
+            z-index: 2;
+            will-change: transform, opacity;
+        }
+        
+        /* Анимации */
+        @keyframes fadeInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes textAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotateX(30deg);
+                text-shadow: 0 0 0 rgba(231, 76, 60, 0);
+            }
+            70% {
+                opacity: 1;
+                transform: scale(1.1) rotateX(0);
+                text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0);
+                text-shadow: 0 0 30px rgba(231, 76, 60, 0.8);
+            }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .magic-button {
+                padding: 1.2rem 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles-container" id="particlesContainer"></div>
+    
+    <div class="container">
+        <h1>Нажми на эту кнопку!</h1>
+        <button class="magic-button" id="magicButton">
+            <i class="fas fa-gem"></i> Нажать <i class="fas fa-gem"></i>
+        </button>
+    </div>
+    
+    <div class="message-container" id="messageContainer">
+        <div class="main-message" id="mainMessage"></div>
+    </div>
+    
+    <div class="footer">create by rinka</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const magicButton = document.getElementById('magicButton');
+            const messageContainer = document.getElementById('messageContainer');
+            const particlesContainer = document.getElementById('particlesContainer');
+            const mainMessage = document.getElementById('mainMessage');
+            
+            // Создаем частицы фона
+            function createParticles() {
+                for (let i = 0; i < 100; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    particle.style.left = `${Math.random() * 100}vw`;
+                    particle.style.top = `${Math.random() * 100}vh`;
+                    particle.style.width = `${Math.random() * 4 + 2}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.animation = `float ${Math.random() * 6 + 4}s infinite ease-in-out`;
+                    particle.style.animationDelay = `${Math.random() * 2}s`;
+                    particlesContainer.appendChild(particle);
+                }
+            }
+            
+            // Анимация сердечек
+            function createHearts() {
+                for (let i = 0; i < 30; i++) {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = '❤';
+                    heart.style.left = `${Math.random() * 100}vw`;
+                    heart.style.top = `${Math.random() * 100}vh`;
+                    heart.style.fontSize = `${Math.random() * 2 + 1}rem`;
+                    heart.style.opacity = '0';
+                    document.body.appendChild(heart);
+                    
+                    // Анимация появления и движения
+                    setTimeout(() => {
+                        heart.style.opacity = '0.7';
+                        heart.style.transition = 'opacity 1s ease';
+                        
+                        // Анимация движения
+                        animateHeart(heart);
+                    }, Math.random() * 2000);
+                }
+            }
+            
+            function animateHeart(heart) {
+                const startX = parseFloat(heart.style.left);
+                const startY = parseFloat(heart.style.top);
+                const duration = 10000 + Math.random() * 10000;
+                
+                heart.animate([
+                    { transform: `translate(0, 0) rotate(0deg) scale(1)` },
+                    { transform: `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 0.8})` },
+                    { transform: `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 0.8})` },
+                    { transform: `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 0.8})` }
+                ], {
+                    duration: duration,
+                    iterations: Infinity,
+                    easing: 'ease-in-out'
+                });
+            }
+            
+            // Создаем плавающие сообщения
+            function createLoveParticles() {
+                const messageContainer = document.getElementById('messageContainer');
+                const particleCount = window.innerWidth < 768 ? 50 : 100;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('love-particle');
+                    particle.textContent = "I love Liza";
+                    
+                    // Начальная позиция
+                    particle.style.left = `${Math.random() * 100}vw`;
+                    particle.style.top = `${Math.random() * 100}vh`;
+                    
+                    // Размер и прозрачность
+                    const size = Math.random() * 0.6 + 0.4;
+                    particle.style.fontSize = `${size}em`;
+                    particle.style.opacity = Math.random() * 0.5 + 0.3;
+                    
+                    // Цвет
+                    const hue = Math.floor(Math.random() * 40 + 330); // Оттенки красного/розового
+                    particle.style.color = `hsl(${hue}, 100%, 75%)`;
+                    
+                    messageContainer.appendChild(particle);
+                    
+                    // Анимация
+                    animateParticle(particle);
+                }
+            }
+            
+            function animateParticle(particle) {
+                const startX = parseFloat(particle.style.left);
+                const startY = parseFloat(particle.style.top);
+                const duration = 15000 + Math.random() * 10000;
+                
+                particle.animate([
+                    { transform: `translate(0, 0) rotate(0deg) scale(1)` },
+                    { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 0.8})` },
+                    { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 0.8})` },
+                    { transform: `translate(0, 0) rotate(0deg) scale(1)` }
+                ], {
+                    duration: duration,
+                    iterations: Infinity,
+                    easing: 'ease-in-out'
+                });
+            }
+            
+            // Инициализация
+            createParticles();
+            createHearts();
+            
+            // Обработчик нажатия на кнопку
+            magicButton.addEventListener('click', function() {
+                // Анимация кнопки
+                magicButton.animate([
+                    { transform: 'scale(1)', opacity: 1 },
+                    { transform: 'scale(1.2)', opacity: 0.8 },
+                    { transform: 'scale(0)', opacity: 0 }
+                ], {
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    fill: 'forwards'
+                });
+                
+                // Показываем сообщения
+                setTimeout(() => {
+                    document.querySelector('.container').style.display = 'none';
+                    messageContainer.style.display = 'flex';
+                    
+                    // Анимация основного текста
+                    mainMessage.style.animation = 'textAppear 1.5s forwards';
+                    
+                    // Создаем плавающие сообщения
+                    createLoveParticles();
+                    
+                    // Пульсация основного текста
+                    setInterval(() => {
+                        mainMessage.animate([
+                            { transform: 'scale(1)' },
+                            { transform: 'scale(1.05)' },
+                            { transform: 'scale(1)' }
+                        ], {
+                            duration: 2000,
+                            easing: 'ease-in-out'
+                        });
+                    }, 3000);
+                    
+                    // Добавляем мерцание
+                    setInterval(() => {
+                        mainMessage.animate([
+                            { textShadow: '0 0 20px rgba(231, 76, 60, 0.8)' },
+                            { textShadow: '0 0 40px rgba(231, 76, 60, 1)' },
+                            { textShadow: '0 0 20px rgba(231, 76, 60, 0.8)' }
+                        ], {
+                            duration: 1500,
+                            easing: 'ease-in-out'
+                        });
+                    }, 5000);
+                    
+                }, 500);
+            });
+            
+            // Адаптация для мобильных устройств
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+        });
+    </script>
+</body>
+</html>
